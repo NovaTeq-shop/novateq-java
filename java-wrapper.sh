@@ -10,12 +10,24 @@ select_java() {
     if [ -f "$dir/unix_args.txt" ]; then
         local args=$(cat "$dir/unix_args.txt" 2>/dev/null)
         if echo "$args" | grep -q "UseCompactObjectHeaders\|UseZGC\|ZGenerational"; then
-            echo "[NovaTeq] Java 24 flags → Java 24" >&2; echo "$JAVA_24"; return
+            echo "[NovaTeq] Java 24+ flags → Java 24" >&2; echo "$JAVA_24"; return
         fi
-        echo "[NovaTeq] Forge → Java 17" >&2; echo "$JAVA_17"; return
+        # Check shim jar versie - forge-26.x+ vereist Java 21+
+        local shim_ver=$(ls "$dir"/forge-*-shim.jar 2>/dev/null | grep -oP 'forge-\K[0-9]+' | head -1)
+        if [ -n "$shim_ver" ] && [ "$shim_ver" -ge 26 ] 2>/dev/null; then
+            echo "[NovaTeq] Forge 26+ (shim) → Java 21" >&2; echo "$JAVA_21"; return
+        fi
+        # Check forge jar versie
+        local forge_mc=$(ls "$dir"/forge-*.jar 2>/dev/null | grep -v shim | grep -oP 'forge-1\.\K[0-9]+' | head -1)
+        if [ -n "$forge_mc" ] && [ "$forge_mc" -ge 20 ] 2>/dev/null; then
+            echo "[NovaTeq] Forge 1.20+ → Java 21" >&2; echo "$JAVA_21"; return
+        elif [ -n "$forge_mc" ] && [ "$forge_mc" -ge 17 ] 2>/dev/null; then
+            echo "[NovaTeq] Forge 1.17-1.19 → Java 17" >&2; echo "$JAVA_17"; return
+        fi
+        echo "[NovaTeq] Forge fallback → Java 21" >&2; echo "$JAVA_21"; return
     fi
-    if [ -f "$dir/fabric-server-launch.jar" ]; then
-        echo "[NovaTeq] Fabric → Java 21" >&2; echo "$JAVA_21"; return
+    if [ -f "$dir/fabric-server-launch.jar" ] || [ -f "$dir/quilt-server-launch.jar" ]; then
+        echo "[NovaTeq] Fabric/Quilt → Java 21" >&2; echo "$JAVA_21"; return
     fi
     local mc_ver="${MC_VERSION:-${VANILLA_VERSION:-}}"
     [ -f "$dir/version.json" ] && mc_ver=$(jq -r '.id // .name' "$dir/version.json" 2>/dev/null)
