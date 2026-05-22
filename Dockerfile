@@ -41,3 +41,7 @@ RUN chmod +x /usr/local/bin/java
 
 RUN groupadd -g 995 container && useradd -u 999 -g 995 -m -d /home/container -s /bin/bash container
 WORKDIR /home/container
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
