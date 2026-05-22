@@ -39,5 +39,5 @@ RUN mkdir -p /opt/java/24 && \
 COPY java-wrapper.sh /usr/local/bin/java
 RUN chmod +x /usr/local/bin/java
 
-RUN useradd -u 999 -m -d /home/container -s /bin/bash container
+RUN groupadd -g 995 container && useradd -u 999 -g 995 -m -d /home/container -s /bin/bash container
 WORKDIR /home/container
