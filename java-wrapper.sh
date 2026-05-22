@@ -4,6 +4,7 @@ JAVA_11="/opt/java/11/bin/java"
 JAVA_17="/opt/java/17/bin/java"
 JAVA_21="/opt/java/21/bin/java"
 JAVA_24="/opt/java/24/bin/java"
+JAVA_25="/opt/java/25/bin/java"
 
 select_java() {
     local dir="/home/container"
@@ -12,12 +13,10 @@ select_java() {
         if echo "$args" | grep -q "UseCompactObjectHeaders\|UseZGC\|ZGenerational"; then
             echo "[NovaTeq] Java 24+ flags → Java 24" >&2; echo "$JAVA_24"; return
         fi
-        # Check shim jar versie - forge-26.x+ vereist Java 21+
         local shim_ver=$(ls "$dir"/forge-*-shim.jar 2>/dev/null | grep -oP 'forge-\K[0-9]+' | head -1)
         if [ -n "$shim_ver" ] && [ "$shim_ver" -ge 26 ] 2>/dev/null; then
-            echo "[NovaTeq] Forge 26+ (shim) → Java 21" >&2; echo "$JAVA_21"; return
+            echo "[NovaTeq] Forge 26+ (shim) → Java 25" >&2; echo "$JAVA_25"; return
         fi
-        # Check forge jar versie
         local forge_mc=$(ls "$dir"/forge-*.jar 2>/dev/null | grep -v shim | grep -oP 'forge-1\.\K[0-9]+' | head -1)
         if [ -n "$forge_mc" ] && [ "$forge_mc" -ge 20 ] 2>/dev/null; then
             echo "[NovaTeq] Forge 1.20+ → Java 21" >&2; echo "$JAVA_21"; return
