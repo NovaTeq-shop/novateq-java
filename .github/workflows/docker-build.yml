@@ -21,3 +21,11 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/novateq-shop/novateq-java:latest
+
+      - name: Build and push installer image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.installer
+          push: true
+          tags: ghcr.io/novateq-shop/novateq-java:installer
