@@ -28,7 +28,7 @@ select_java() {
     if [ -f "$dir/unix_args.txt" ]; then
         local args=$(cat "$dir/unix_args.txt" 2>/dev/null)
         if echo "$args" | grep -q "UseCompactObjectHeaders\|UseZGC\|ZGenerational"; then
-            echo "[NovaTeq] Forge: Java 24+ flags → Java 24" >&2; echo "$JAVA_24"; return
+            echo "[NovaTeq] Forge: Java 24+ flags → Java 25" >&2; echo "$JAVA_25"; return
         fi
         local shim_ver=$(ls "$dir"/forge-*-shim.jar 2>/dev/null | grep -oP 'forge-\K[0-9]+' | head -1)
         if [ -n "$shim_ver" ] && [ "$shim_ver" -ge 26 ] 2>/dev/null; then
@@ -51,6 +51,11 @@ select_java() {
         local minor=$(get_mc_minor "$mc_ver")
         local java=$(get_java_for_minor "$minor")
         echo "[NovaTeq] Fabric MC ${mc_ver} → $(basename $(dirname $java))" >&2; echo "$java"; return
+    fi
+
+    # --- SPONGE ---
+    if [ -f "$dir/sponge_server.jar" ] || echo "${SPONGE_VERSION:-}" | grep -q "1.8|1.9|1.10|1.11|1.12"; then
+        echo "[NovaTeq] Sponge legacy → Java 8" >&2; echo "$JAVA_8"; return
     fi
 
     # --- VANILLA / PAPER / PURPUR / SPIGOT ---
