@@ -17,7 +17,7 @@ get_java_for_minor() {
     if [ "$minor" -ge 25 ] 2>/dev/null; then echo "$JAVA_25"
     elif [ "$minor" -ge 21 ] 2>/dev/null; then echo "$JAVA_21"
     elif [ "$minor" -ge 17 ] 2>/dev/null; then echo "$JAVA_17"
-    elif [ "$minor" -ge 12 ] 2>/dev/null; then echo "$JAVA_11"
+    elif [ "$minor" -ge 12 ] 2>/dev/null; then echo "$JAVA_8"
     else echo "$JAVA_8"; fi
 }
 
